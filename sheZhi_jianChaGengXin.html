@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>容易学APP - 版本检查</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            /* 以BD0000为主的红黑渐变 */
+            background: linear-gradient(135deg, #BD0000 0%, #8B0000 50%, #4A0000 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        /* 加载容器样式 */
+        .loader-container {
+            text-align: center;
+            transition: all 0.5s ease;
+        }
+
+        .loading-text {
+            font-size: 20px;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+            opacity: 0;
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        /* 加载动画 */
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        /* 结果容器样式 */
+        .result-container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 50px;
+            box-shadow: 0 8px 32px 0 rgba(139, 0, 0, 0.3); /* 适配红色调的阴影 */
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            max-width: 500px;
+            width: 90%;
+            transform: translateY(20px);
+            opacity: 0;
+            display: none;
+        }
+
+        .result-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #f0f8ff;
+            text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .result-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff8a8a, transparent); /* 红色系渐变 */
+        }
+
+        .version-info {
+            font-size: 18px;
+            margin: 25px 0;
+            color: #e6efff;
+            line-height: 1.6;
+        }
+
+        /* 红黄渐变动画文字样式 */
+        .gradient-text {
+            font-weight: bold;
+            background: linear-gradient(90deg, #ff0000, #ffd700, #ff0000);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+
+        .version-number {
+            /* 复用渐变文字样式 */
+            composes: gradient-text;
+        }
+
+        .admin-tip {
+            /* 复用渐变文字样式 */
+            composes: gradient-text;
+            font-weight: 600;
+        }
+
+        .notice-text {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #d9e2ff;
+            background: rgba(189, 0, 0, 0.2); /* 适配红色调的背景 */
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #ff8a8a; /* 红色系边框 */
+        }
+
+        /* 动画定义 */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        @keyframes showResult {
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 红黄渐变过渡动画 */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 显示结果的动画类 */
+        .show-result {
+            display: block;
+            animation: showResult 0.8s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载界面 -->
+    <div class="loader-container" id="loader">
+        <div class="loading-text">正在检查最新版本</div>
+        <div class="loader"></div>
+    </div>
+
+    <!-- 结果展示界面 -->
+    <div class="result-container" id="result">
+        <div class="result-title">服务器连接成功，版本检查完成</div>
+        <div class="version-info">
+            最新版本为：<span class="gradient-text">0.1测试版</span>
+        </div>
+        <div class="notice-text">
+            由于”容易学APP“当前处于测试阶段，服务器暂未完全配置，无法自动更新软件，请联系<span class="gradient-text">单位相关管理员</span>获取最新版本安装包。
+        </div>
+    </div>
+
+    <script>
+        // 等待1秒钟后切换界面
+        setTimeout(() => {
+            // 隐藏加载界面
+            document.getElementById('loader').style.opacity = 0;
+            
+            // 显示结果界面并添加动画
+            setTimeout(() => {
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('result').classList.add('show-result');
+            }, 500);
+        }, 1000); // 1秒钟延迟
+    </script>
+</body>
+</html>
