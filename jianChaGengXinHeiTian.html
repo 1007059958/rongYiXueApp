@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>容易学APP - 版本检查</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+
+        /* 整体页面背景保持黑色，禁止拖动/滚动 */
+        html, body {
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            background: #000000; /* 整体背景保持黑色 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+            position: relative;
+        }
+
+        /* 容器外层 - 固定9:16竖屏比例 */
+        .wrapper {
+            aspect-ratio: 9/16;
+            max-width: 90vw;
+            max-height: 90vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 加载容器样式（保持黑色背景下的白色元素） */
+        .loader-container {
+            text-align: center;
+            transition: all 0.5s ease;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-text {
+            font-size: 20px;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+            opacity: 0;
+            animation: fadeIn 0.8s ease forwards;
+            color: #ffffff;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        /* 结果容器样式 - 框体改为指定灰色 #3F3F3F */
+        .result-container {
+            background: #3F3F3F; /* 核心修改：框体背景改为指定灰色 */
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 8px 32px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+            max-width: 400px;
+            transform: translateY(20px);
+            opacity: 0;
+            display: none;
+        }
+
+        .result-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #ffffff;
+            text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .result-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ffffff, transparent);
+        }
+
+        .version-info {
+            font-size: 18px;
+            margin: 25px 0;
+            color: #dddddd;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        /* 白色文字+细黑色描边样式 */
+        .red-text {
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 0.5px 0.5px 0 #000,
+                         -0.5px -0.5px 0 #000,
+                         0.5px -0.5px 0 #000,
+                         -0.5px 0.5px 0 #000;
+        }
+
+        .version-number {
+            composes: red-text;
+        }
+
+        .admin-tip {
+            composes: red-text;
+            font-weight: 600;
+        }
+
+        .notice-text {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #dddddd;
+            background: rgba(40, 40, 40, 0.8); /* 提示文本背景适配灰色框体 */
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #ffffff;
+        }
+
+        /* 动画定义 */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        @keyframes showResult {
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .show-result {
+            display: block;
+            animation: showResult 0.8s ease forwards;
+        }
+
+        /* 禁止文本选择 */
+        * {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- 加载界面（背景黑色） -->
+        <div class="loader-container" id="loader">
+            <div class="loading-text">正在检查最新版本</div>
+            <div class="loader"></div>
+        </div>
+
+        <!-- 结果展示框（背景灰色 #3F3F3F） -->
+        <div class="result-container" id="result">
+            <div class="result-title">服务器连接成功</div>
+            <div class="version-info">
+                最新版本：<span class="red-text">0.1测试版</span><br>
+                更新时间：<span class="red-text">2026.3.10</span>
+            </div>
+            <div class="notice-text">
+                由于"容易学APP"当前处于测试阶段，服务器暂未完全配置，可联系<span class="red-text">单位相关管理员</span>获取最新版本安装包。
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1秒后切换到结果界面
+        setTimeout(() => {
+            document.getElementById('loader').style.opacity = 0;
+            setTimeout(() => {
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('result').classList.add('show-result');
+            }, 500);
+        }, 1000);
+
+        // 禁止移动端触摸滚动
+        document.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+    </script>
+</body>
+</html>
